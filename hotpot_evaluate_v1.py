@@ -5,25 +5,25 @@ import string
 from collections import Counter
 import pickle
 
-def normalize_answer(s):
+def normalize_answer(s: str) -> str:
 
-    def remove_articles(text):
+    def remove_articles(text: str) -> str:
         return re.sub(r'\b(a|an|the)\b', ' ', text)
 
-    def white_space_fix(text):
+    def white_space_fix(text: str) -> str:
         return ' '.join(text.split())
 
-    def remove_punc(text):
+    def remove_punc(text: str) -> str:
         exclude = set(string.punctuation)
         return ''.join(ch for ch in text if ch not in exclude)
 
-    def lower(text):
+    def lower(text:str)-> str:
         return text.lower()
 
     return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 
-def f1_score(prediction, ground_truth):
+def f1_score(prediction: str, ground_truth: str):
     normalized_prediction = normalize_answer(prediction)
     normalized_ground_truth = normalize_answer(ground_truth)
 
@@ -46,10 +46,10 @@ def f1_score(prediction, ground_truth):
     return f1, precision, recall
 
 
-def exact_match_score(prediction, ground_truth):
+def exact_match_score(prediction:str, ground_truth: str) -> bool:
     return (normalize_answer(prediction) == normalize_answer(ground_truth))
 
-def update_answer(metrics, prediction, gold):
+def update_answer(metrics: dict, prediction, gold):
     em = exact_match_score(prediction, gold)
     f1, prec, recall = f1_score(prediction, gold)
     metrics['em'] += float(em)
@@ -80,13 +80,13 @@ def update_sp(metrics, prediction, gold):
     metrics['sp_recall'] += recall
     return em, prec, recall
 
-def eval(prediction_file, gold_file):
+def eval(prediction_file: str, gold_file: str) -> dict[str, int]:
     with open(prediction_file) as f:
         prediction = json.load(f)
     with open(gold_file) as f:
         gold = json.load(f)
 
-    metrics = {'em': 0, 'f1': 0, 'prec': 0, 'recall': 0,
+    metrics: dict[str, int] = {'em': 0, 'f1': 0, 'prec': 0, 'recall': 0,
         'sp_em': 0, 'sp_f1': 0, 'sp_prec': 0, 'sp_recall': 0,
         'joint_em': 0, 'joint_f1': 0, 'joint_prec': 0, 'joint_recall': 0}
     for dp in gold:
@@ -123,7 +123,7 @@ def eval(prediction_file, gold_file):
     for k in metrics.keys():
         metrics[k] /= N
 
-    print(metrics)
+    return metrics
 
 if __name__ == '__main__':
     eval(sys.argv[1], sys.argv[2])
