@@ -1,0 +1,6 @@
+__pycache__/
+glove.840B.300d.txt
+glove.840B.300d.zip
+hotpot_dev_distractor_v1.json
+hotpot_dev_fullwiki_v1.json
+hotpot_train_v1.1.json
